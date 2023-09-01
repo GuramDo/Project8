@@ -77,6 +77,7 @@ class ViewController: UIViewController {
         view.addSubview(buttonsView)
         
         
+        // constraint initialization
         NSLayoutConstraint.activate([
             scoreLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
             scoreLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
@@ -91,7 +92,7 @@ class ViewController: UIViewController {
             cluesLabel.widthAnchor.constraint(equalTo: view.layoutMarginsGuide.widthAnchor, multiplier: 0.6, constant: -100),
             
             // also pin the top of the answers label to the bottom of the score label
-            answersLabel.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor),
+            answersLabel.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor),#imageLiteral(resourceName: "simulator_screenshot_8607C3F1-CF8E-44F8-9D92-4E0F8562B1DF.png")
             
             // make the answers label stick to the trailing edge of our layout margins, minus 100
             answersLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -100),
