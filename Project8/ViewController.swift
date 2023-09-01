@@ -174,31 +174,45 @@ class ViewController: UIViewController {
     
     @objc func submitTapped(_ sender: UIButton) {
         guard let answerText = currentAnswer.text else { return }
-
-            if let solutionPosition = solutions.firstIndex(of: answerText) {
-                activatedButtons.removeAll()
-
-                var splitAnswers = answersLabel.text?.components(separatedBy: "\n")
-                splitAnswers?[solutionPosition] = answerText
-                answersLabel.text = splitAnswers?.joined(separator: "\n")
-
-                currentAnswer.text = ""
-                score += 1
-
-                if score % 7 == 0 {
-                    let ac = UIAlertController(title: "Well done!", message: "Are you ready for the next level?", preferredStyle: .alert)
-                    ac.addAction(UIAlertAction(title: "Let's go!", style: .default, handler: levelUp))
-                    present(ac, animated: true)
-                }
+        
+        if let solutionPosition = solutions.firstIndex(of: answerText) {
+            // Code for correct guess
+            activatedButtons.removeAll()
+            
+            var splitAnswers = answersLabel.text?.components(separatedBy: "\n")
+            splitAnswers?[solutionPosition] = answerText
+            answersLabel.text = splitAnswers?.joined(separator: "\n")
+            
+            currentAnswer.text = ""
+            score += 1
+            
+            if score % 7 == 0 {
+                let ac = UIAlertController(title: "Well done!", message: "Are you ready for the next level?", preferredStyle: .alert)
+                ac.addAction(UIAlertAction(title: "Let's go!", style: .default, handler: levelUp))
+                present(ac, animated: true)
             }
+        } else {
+            
+            // Code for incorrect guess
+            score -= 1 // Deduct points for incorrect guess
+            
+            if score < 0 {
+                score = 0 // Ensure the score doesn't go negative
+            }
+            // Code for incorrect guess
+            let ac = UIAlertController(title: "Incorrect Guess", message: "Sorry, that's not the correct word.", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            present(ac, animated: true)
+        }
     }
+    
     
     func levelUp(action: UIAlertAction) {
         level += 1
         solutions.removeAll(keepingCapacity: true)
-
+        
         loadLevel()
-
+        
         for btn in letterButtons {
             btn.isHidden = false
         }
