@@ -9,15 +9,18 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    // MARK: - UI Elements
+    
     var cluesLabel: UILabel!
     var answersLabel: UILabel!
     var currentAnswer: UITextField!
     var scoreLabel: UILabel!
     var letterButtons = [UIButton]()
     
+    // MARK: - Game Variables
+    
     var activatedButtons = [UIButton]()
     var solutions = [String]()
-    
     var score = 0 {
         didSet {
             scoreLabel.text = "Score: \(score)"
@@ -25,16 +28,20 @@ class ViewController: UIViewController {
     }
     var level = 1
     
+    // MARK: - View Lifecycle Methods
+    
     override func loadView() {
         view = UIView()
         view.backgroundColor = .white
         
+        // Score Label
         scoreLabel = UILabel()
         scoreLabel.translatesAutoresizingMaskIntoConstraints = false
         scoreLabel.textAlignment = .right
-        scoreLabel.text = "Score = 0"
+        scoreLabel.text = "Score: 0"
         view.addSubview(scoreLabel)
         
+        // Clues Label
         cluesLabel = UILabel()
         cluesLabel.translatesAutoresizingMaskIntoConstraints = false
         cluesLabel.font = UIFont.systemFont(ofSize: 24)
@@ -43,6 +50,7 @@ class ViewController: UIViewController {
         cluesLabel.setContentHuggingPriority(UILayoutPriority(1), for: .vertical)
         view.addSubview(cluesLabel)
         
+        // Answers Label
         answersLabel = UILabel()
         answersLabel.translatesAutoresizingMaskIntoConstraints = false
         answersLabel.font = UIFont.systemFont(ofSize: 24)
@@ -52,6 +60,7 @@ class ViewController: UIViewController {
         answersLabel.setContentHuggingPriority(UILayoutPriority(1), for: .vertical)
         view.addSubview(answersLabel)
         
+        // Current Answer Text Field
         currentAnswer = UITextField()
         currentAnswer.translatesAutoresizingMaskIntoConstraints = false
         currentAnswer.placeholder = "Tap letters to guess"
@@ -60,6 +69,7 @@ class ViewController: UIViewController {
         currentAnswer.isUserInteractionEnabled = false
         view.addSubview(currentAnswer)
         
+        // Submit Button
         let submit = UIButton(type: .system)
         submit.translatesAutoresizingMaskIntoConstraints = false
         submit.setTitle("SUBMIT", for: .normal)
@@ -67,7 +77,7 @@ class ViewController: UIViewController {
         submit.configuration = .filled()
         view.addSubview(submit)
         
-        
+        // Clear Button
         let clear = UIButton(type: .system)
         clear.translatesAutoresizingMaskIntoConstraints = false
         clear.setTitle("CLEAR", for: .normal)
@@ -75,49 +85,44 @@ class ViewController: UIViewController {
         clear.configuration = .filled()
         view.addSubview(clear)
         
+        // Buttons View Container
         let buttonsView = UIView()
         buttonsView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(buttonsView)
         
-        
-        // constraint initialization
+        // Constraints
         NSLayoutConstraint.activate([
+            // Score Label Constraints
             scoreLabel.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
             scoreLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
             
-            // pin the top of the clues label to the bottom of the score label
+            // Clues Label Constraints
             cluesLabel.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor),
-            
-            // pin the leading edge of the clues label to the leading edge of our layout margins, adding 100 for some space
             cluesLabel.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor, constant: 100),
-            
-            // make the clues label 60% of the width of our layout margins, minus 100
             cluesLabel.widthAnchor.constraint(equalTo: view.layoutMarginsGuide.widthAnchor, multiplier: 0.6, constant: -100),
             
-            // also pin the top of the answers label to the bottom of the score label
+            // Answers Label Constraints
             answersLabel.topAnchor.constraint(equalTo: scoreLabel.bottomAnchor),
-            
-            // make the answers label stick to the trailing edge of our layout margins, minus 100
             answersLabel.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor, constant: -100),
-            
-            // make the answers label take up 40% of the available space, minus 100
             answersLabel.widthAnchor.constraint(equalTo: view.layoutMarginsGuide.widthAnchor, multiplier: 0.4, constant: -100),
-            
-            // make the answers label match the height of the clues label
             answersLabel.heightAnchor.constraint(equalTo: cluesLabel.heightAnchor),
             
+            // Current Answer Text Field Constraints
             currentAnswer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             currentAnswer.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5),
             currentAnswer.topAnchor.constraint(equalTo: cluesLabel.bottomAnchor, constant: 20),
             
+            // Submit Button Constraints
             submit.topAnchor.constraint(equalTo: currentAnswer.bottomAnchor),
             submit.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: -100),
             submit.heightAnchor.constraint(equalToConstant: 44),
             
+            // Clear Button Constraints
             clear.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 100),
             clear.centerYAnchor.constraint(equalTo: submit.centerYAnchor),
             clear.heightAnchor.constraint(equalToConstant: 44),
             
+            // Buttons View Container Constraints
             buttonsView.widthAnchor.constraint(equalToConstant: 750),
             buttonsView.heightAnchor.constraint(equalToConstant: 320),
             buttonsView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -125,64 +130,47 @@ class ViewController: UIViewController {
             buttonsView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -20)
         ])
         
-        // set some values for the width and height of each button
+        // Create Letter Buttons
         let width = 150
         let height = 80
         
-        // create 20 buttons as a 4x5 grid
         for row in 0..<4 {
             for col in 0..<5 {
-                // create a new button and give it a big font size
                 let letterButton = UIButton(type: .system)
                 letterButton.titleLabel?.font = UIFont.systemFont(ofSize: 36)
-                
-                // give the button some temporary text so we can see it on-screen
                 letterButton.setTitle("WWW", for: .normal)
-                
                 letterButton.addTarget(self, action: #selector(letterTapped), for: .touchUpInside)
-                
-                // calculate the frame of this button using its column and row
                 let frame = CGRect(x: col * width, y: row * height, width: width, height: height)
                 letterButton.frame = frame
-                
-                // add it to the buttons view
                 buttonsView.addSubview(letterButton)
-                
-                // and also to our letterButtons array
                 letterButtons.append(letterButton)
             }
         }
-        
-        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         loadLevel()
     }
     
+    // MARK: - Button Actions
+    
     @objc func letterTapped(_ sender: UIButton) {
         guard let buttonTitle = sender.titleLabel?.text else { return }
-        
         currentAnswer.text = currentAnswer.text?.appending(buttonTitle)
         activatedButtons.append(sender)
         sender.isHidden = true
-        
-        
     }
     
     @objc func submitTapped(_ sender: UIButton) {
         guard let answerText = currentAnswer.text else { return }
         
         if let solutionPosition = solutions.firstIndex(of: answerText) {
-            // Code for correct guess
+            // Correct Guess
             activatedButtons.removeAll()
-            
             var splitAnswers = answersLabel.text?.components(separatedBy: "\n")
             splitAnswers?[solutionPosition] = answerText
             answersLabel.text = splitAnswers?.joined(separator: "\n")
-            
             currentAnswer.text = ""
             score += 1
             
@@ -192,27 +180,21 @@ class ViewController: UIViewController {
                 present(ac, animated: true)
             }
         } else {
-            
-            // Code for incorrect guess
-            score -= 1 // Deduct points for incorrect guess
-            
+            // Incorrect Guess
+            score -= 1
             if score < 0 {
-                score = 0 // Ensure the score doesn't go negative
+                score = 0
             }
-            // Code for incorrect guess
             let ac = UIAlertController(title: "Incorrect Guess", message: "Sorry, that's not the correct word.", preferredStyle: .alert)
             ac.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
             present(ac, animated: true)
         }
     }
     
-    
     func levelUp(action: UIAlertAction) {
         level += 1
         solutions.removeAll(keepingCapacity: true)
-        
         loadLevel()
-        
         for btn in letterButtons {
             btn.isHidden = false
         }
@@ -220,14 +202,13 @@ class ViewController: UIViewController {
     
     @objc func clearTapped(_ sender: UIButton) {
         currentAnswer.text = ""
-        
         for button in activatedButtons {
             button.isHidden = false
         }
-        
         activatedButtons.removeAll()
-        
     }
+    
+    // MARK: - Game Logic
     
     func loadLevel() {
         DispatchQueue.global(qos: .background).async {
@@ -256,7 +237,6 @@ class ViewController: UIViewController {
                     }
                     
                     DispatchQueue.main.async {
-                        // Update UI on the main thread
                         self.cluesLabel.text = clueString.trimmingCharacters(in: .whitespacesAndNewlines)
                         self.answersLabel.text = solutionsString.trimmingCharacters(in: .whitespacesAndNewlines)
                         
