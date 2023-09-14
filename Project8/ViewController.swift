@@ -159,7 +159,12 @@ class ViewController: UIViewController {
         guard let buttonTitle = sender.titleLabel?.text else { return }
         currentAnswer.text = currentAnswer.text?.appending(buttonTitle)
         activatedButtons.append(sender)
-        sender.isHidden = true
+        
+        UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
+            sender.alpha = 0 // Fade out the button by setting alpha to 0
+        }) { (completed) in
+            sender.isHidden = true // Once the animation is complete, hide the button
+        }
     }
     
     @objc func submitTapped(_ sender: UIButton) {
