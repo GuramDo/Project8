@@ -160,7 +160,7 @@ class ViewController: UIViewController {
         currentAnswer.text = currentAnswer.text?.appending(buttonTitle)
         activatedButtons.append(sender)
         
-        UIView.animate(withDuration: 1, delay: 0, options: [], animations: {
+        UIView.animate(withDuration: 0.5, delay: 0, options: [], animations: {
             sender.alpha = 0 // Fade out the button by setting alpha to 0
         }) { (completed) in
             sender.isHidden = true // Once the animation is complete, hide the button
